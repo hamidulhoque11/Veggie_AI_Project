@@ -1,133 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VeggieSense AI - Leafy Green Identifier</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Connected Custom CSS File -->
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VeggieSense AI</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- HEIC Converter -->
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-2 md:p-6">
 
-  <!-- Main Chat Container -->
-  <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl flex flex-col h-[90vh] overflow-hidden border border-slate-200 relative">
-    
-    <!-- Header -->
-    <header class="bg-emerald-700 text-white p-4 flex items-center justify-between shadow-md">
-      <div class="flex items-center gap-3">
-        <div class="bg-emerald-800 p-2 rounded-xl">
-          <i data-lucide="sprout" class="w-6 h-6 text-emerald-200"></i>
-        </div>
-        <div>
-          <h1 class="font-bold text-lg leading-tight">VeggieSense AI</h1>
-          <p class="text-xs text-emerald-200">Leafy Green & Nutrition Assistant</p>
-        </div>
-      </div>
-      <span class="text-xs bg-emerald-800 px-3 py-1 rounded-full text-emerald-100 flex items-center gap-1">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Online
-      </span>
-    </header>
+<body>
 
-    <!-- Chat Messages Box -->
-    <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50">
-      
-      <!-- Welcome Message -->
-      <div class="flex items-start gap-3">
-        <div class="bg-emerald-700 text-white p-2 rounded-full mt-1">
-          <i data-lucide="bot" class="w-5 h-5"></i>
+    <div class="chat-container">
+
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="header-icon">
+                <i class="fa-solid fa-leaf"></i>
+            </div>
+
+            <div>
+                <h2>VeggieSense AI</h2>
+                <p>AI Vegetable & Crop Assistant</p>
+            </div>
         </div>
-        <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] text-slate-800 text-sm leading-relaxed">
-          <p class="font-semibold text-emerald-800 mb-1">Hello! 👋</p>
-          <p>I am your <b>VeggieSense AI</b> assistant. Take a live photo, upload an image, or type the name of any leafy vegetable—I will identify it and provide its calories, protein, iron, and health benefits!</p>
+
+
+        <!-- Chat Area -->
+        <div class="chat-box" id="chatBox">
+
+            <!-- Initial Bot Message -->
+            <div class="message bot-message">
+                <div class="message-avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+
+                <div class="message-content">
+                    Hello! 👋<br><br>
+                    Upload a vegetable or crop image and I will analyze it for you.
+                </div>
+            </div>
+
         </div>
-      </div>
+
+
+        <!-- Image Preview -->
+        <div class="preview-container" id="previewContainer">
+
+            <div class="preview-image-wrapper">
+
+                <img id="previewImage" src="" alt="Selected image">
+
+                <button class="remove-preview" id="removePreview" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Input Area -->
+        <div class="chat-input-container">
+
+            <!-- Gallery Button -->
+            <button class="icon-btn" id="galleryBtn" type="button"
+                title="Upload Image">
+
+                <i class="fa-solid fa-image"></i>
+
+            </button>
+
+            <!-- Camera Button -->
+            <button class="icon-btn" id="cameraBtn" type="button"
+                title="Open Camera">
+
+                <i class="fa-solid fa-camera"></i>
+
+            </button>
+
+            <!-- Hidden Gallery Input -->
+            <input
+                type="file"
+                id="imageInput"
+                accept="image/*"
+                hidden
+            >
+
+            <!-- Text Input -->
+            <input
+                type="text"
+                id="messageInput"
+                placeholder="Ask something about your crop..."
+                autocomplete="off"
+            >
+
+            <!-- Send Button -->
+            <button class="send-btn" id="sendBtn" type="button"
+                title="Send">
+
+                <i class="fa-solid fa-paper-plane"></i>
+
+            </button>
+
+        </div>
 
     </div>
 
-    <!-- Image Preview Area -->
-    <div id="image-preview-container" class="hidden px-4 py-2 bg-emerald-50 border-t border-emerald-100 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <img id="image-preview" class="w-12 h-12 object-cover rounded-lg border border-emerald-300 shadow-sm" src="" alt="Preview">
-        <span class="text-xs text-emerald-800 font-medium">Image Ready</span>
-      </div>
-      <button onclick="removeImage()" class="text-slate-400 hover:text-red-500 p-1">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-    </div>
 
-    <!-- Input Footer -->
-    <footer class="p-3 bg-white border-t border-slate-200">
-      <form id="chat-form" onsubmit="handleSend(event)" class="flex items-center gap-2">
-        
-        <!-- Live Camera Button -->
-        <button 
-          type="button" 
-          onclick="openCamera()" 
-          title="Take Live Photo" 
-          class="p-2.5 hover:bg-emerald-50 text-emerald-600 rounded-xl transition border border-emerald-200 flex items-center justify-center"
-        >
-          <i data-lucide="camera" class="w-5 h-5"></i>
-        </button>
+    <!-- ============================= -->
+    <!-- CAMERA MODAL -->
+    <!-- ============================= -->
 
-        <!-- Upload File/Image Button -->
-        <label 
-          title="Upload Image from Device" 
-          class="cursor-pointer p-2.5 hover:bg-slate-100 text-slate-600 rounded-xl transition border border-slate-200 flex items-center justify-center"
-        >
-          <i data-lucide="image" class="w-5 h-5 text-slate-600"></i>
-          <input type="file" id="file-input" accept="image/*" class="hidden" onchange="previewFile(event)">
-        </label>
+    <div class="camera-modal" id="cameraModal">
 
-        <!-- Text Input -->
-        <input 
-          type="text" 
-          id="text-input" 
-          placeholder="Type vegetable name or take photo..." 
-          class="flex-1 bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
-        >
+        <div class="camera-box">
 
-        <!-- Send Button -->
-        <button 
-          type="submit" 
-          class="bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-xl transition shadow-md flex items-center justify-center"
-        >
-          <i data-lucide="send" class="w-5 h-5"></i>
-        </button>
+            <!-- Camera Header -->
+            <div class="camera-header">
 
-      </form>
-    </footer>
+                <h3>
+                    <i class="fa-solid fa-camera"></i>
+                    Camera
+                </h3>
 
-    <!-- Camera Live View Modal -->
-    <div id="camera-modal" class="hidden absolute inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center p-4">
-      <div class="relative w-full max-w-md bg-black rounded-2xl overflow-hidden shadow-2xl flex flex-col items-center">
-        <!-- Live Video Element -->
-        <video id="camera-video" autoplay playsinline class="w-full h-72 object-cover bg-black"></video>
-        
-        <!-- Close Button -->
-        <button onclick="closeCamera()" class="absolute top-3 right-3 text-white bg-black/50 p-2 rounded-full hover:bg-black/80 transition">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+                <button
+                    class="camera-close"
+                    id="cameraClose"
+                    type="button"
+                    title="Close Camera">
 
-        <!-- Capture Trigger Button -->
-        <div class="p-4 w-full bg-slate-900 flex justify-center">
-          <button 
-            type="button" 
-            onclick="capturePhoto()" 
-            class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-full font-medium flex items-center gap-2 shadow-lg transition active:scale-95"
-          >
-            <i data-lucide="aperture" class="w-5 h-5"></i> Capture Photo
-          </button>
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- Webcam -->
+            <div class="camera-preview">
+
+                <video
+                    id="cameraVideo"
+                    autoplay
+                    playsinline>
+                </video>
+
+                <!-- Captured Image -->
+                <canvas
+                    id="cameraCanvas"
+                    hidden>
+                </canvas>
+
+            </div>
+
+
+            <!-- Camera Controls -->
+            <div class="camera-controls">
+
+                <!-- Take Photo -->
+                <button
+                    class="take-photo-btn"
+                    id="takePhotoBtn"
+                    type="button">
+
+                    <i class="fa-solid fa-camera"></i>
+                    Take Photo
+
+                </button>
+
+
+                <!-- Retake -->
+                <button
+                    class="retake-btn"
+                    id="retakeBtn"
+                    type="button">
+
+                    <i class="fa-solid fa-rotate-right"></i>
+                    Retake
+
+                </button>
+
+
+                <!-- Use Photo -->
+                <button
+                    class="use-photo-btn"
+                    id="usePhotoBtn"
+                    type="button">
+
+                    <i class="fa-solid fa-check"></i>
+                    Use Photo
+
+                </button>
+
+            </div>
+
         </div>
-      </div>
+
     </div>
 
-  </div>
 
-  <!-- Connected Custom JS File -->
-  <script src="script.js"></script>
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+
 </body>
+
 </html>
