@@ -7,7 +7,6 @@ from PIL import Image
 
 app = FastAPI()
 
-# Enable CORS for all origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,7 +15,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize Gemini Client
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
@@ -45,7 +43,8 @@ async def analyze_vegetable(file: UploadFile = File(...)):
             contents=[image, prompt]
         )
         
-        return {"result": response.text}
+        # 'result' er jaygay 'reply' kora holo
+        return {"reply": response.text}
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
